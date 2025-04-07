@@ -1,0 +1,12 @@
+B0_depth 0
+B0_tripCount 1
+B0_maxAllocSize 1280000
+B0_numAnnotatedInstr 0
+B0_minDist_mul 12
+B0_minDist_div 12
+B0_minDist_call -2147483647
+B0_n_* 3
+B0_n_MemOp 2
+B0_n_call 1
+B0_n_call(kernel_gemver) 1
+B0_n_load 2

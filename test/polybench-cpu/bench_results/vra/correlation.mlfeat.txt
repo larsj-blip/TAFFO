@@ -1,0 +1,17 @@
+B0_depth 0
+B0_tripCount 1
+B0_maxAllocSize 249600
+B0_numAnnotatedInstr 7
+B0_minDist_mul 12
+B0_minDist_div 12
+B0_minDist_call -2147483643
+B0_n_* 7
+B0_n_IntegerOp 1
+B0_n_MathOp 1
+B0_n_MemOp 5
+B0_n_Shift 1
+B0_n_call 1
+B0_n_call(kernel_correlation.3_fixp) 1
+B0_n_getelementptr 4
+B0_n_load 1
+B0_n_lshr 1

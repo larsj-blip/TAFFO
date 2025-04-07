@@ -1,0 +1,16 @@
+* 52
+CmpOp 10
+IntegerOp 6
+MathOp 6
+MemOp 24
+add 4
+br 7
+call 4
+call(llvm.fmuladd.f64) 4
+getelementptr 10
+icmp 4
+load 10
+or 2
+phi 6
+ret 1
+store 4

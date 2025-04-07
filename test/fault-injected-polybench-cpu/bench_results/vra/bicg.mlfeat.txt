@@ -1,0 +1,12 @@
+B0_depth 0
+B0_tripCount 1
+B0_maxAllocSize 639600
+B0_numAnnotatedInstr 6
+B0_minDist_mul 12
+B0_minDist_div 12
+B0_minDist_call -2147483644
+B0_n_* 6
+B0_n_MemOp 5
+B0_n_call 1
+B0_n_call(kernel_bicg.2_fixp) 1
+B0_n_getelementptr 5

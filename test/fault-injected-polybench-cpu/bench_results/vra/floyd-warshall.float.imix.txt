@@ -1,0 +1,17 @@
+* 42
+CastOp 2
+CmpOp 8
+IntegerOp 6
+MathOp 6
+MemOp 15
+add 5
+alloca 2
+bitcast 2
+br 10
+getelementptr 5
+icmp 5
+load 6
+or 1
+phi 3
+ret 1
+store 2

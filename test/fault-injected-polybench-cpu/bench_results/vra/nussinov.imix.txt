@@ -1,0 +1,17 @@
+* 256
+CastOp 46
+CmpOp 45
+IntegerOp 40
+MathOp 40
+MemOp 67
+add 30
+br 57
+getelementptr 44
+icmp 17
+load 21
+phi 26
+ret 1
+select 2
+sext 46
+store 2
+sub 10
