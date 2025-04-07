@@ -91,3 +91,11 @@ and the `readme`s in the integration test directory.
 
 **Notice:** Some integration tests do not work in the current version of TAFFO.
 This is a known issue and will be fixed in a later revision.
+
+
+
+
+# actually making stuff work today as of 07.04.2025
+
+The abseil library used in or-tools is missing a header declaration in the file absl/strings/internal/str_format/extension.h . (the missing header is #include <stdint.h>)
+To successfully build TAFFO you need to first perform the initial cmake .. -DTAFFO_BUILD_ORTOOLS=ON command, then delete the folder  build/_deps/absl-build, edit the file mentioned above, and then perform cmake --build .
