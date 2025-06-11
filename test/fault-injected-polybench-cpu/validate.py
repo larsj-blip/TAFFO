@@ -37,7 +37,7 @@ def ReadValues(filename):
       l = f.readline()
 
 
-def ComputeDifference(fixed_point_data, floating_point_data):
+def compute_difference(fixed_point_data, floating_point_data):
   successful_iterations = 0
   total_difference_between_floating_point_and_fixed_point_values = Decimal(0)
   total_floating_point_value = Decimal(0)
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     fixed_point_execution_times_path = PolybenchRootDir() / 'results-out' / (name + '.time.txt')
     fixed_point_execution_times = ReadValues(str(fixed_point_execution_times_path))
     try:
-      res = ComputeDifference(fixed_point_data, floating_point_data)
+      res = compute_difference(fixed_point_data, floating_point_data)
       res.update(ComputeSpeedups(floating_point_times, fixed_point_execution_times))
       g_res[BenchmarkName(bench)] = res
     except Exception as inst:

@@ -1,0 +1,13 @@
+===== line 108... in seidel-2d.ll =====
+  %temp1 = fdiv double %22, %24
+  %temp2 = shl i64 1, 40
+  %temp3 = bitcast double %temp1 to i64
+  %temp4 = xor i64 %temp2, %temp3
+  %25 = bitcast i64 %temp4 to double
+
+
+  ===== line 431... in seidel-2d.out.5.taffotmp.ll =====
+  %18 = sdiv i64 %16, %17, !taffo.info !109
+  %temp1 = shl i64 1, 40
+  %temp2 = xor i64 %temp1, %18
+  %s10_22fixp4 = trunc i64 %temp2 to i32, !taffo.info !110
