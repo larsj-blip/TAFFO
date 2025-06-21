@@ -48,10 +48,6 @@ compile_one()
     -lm \
     2> build/${benchname}.log || return $?
 
-  mkdir build/faultinjectable_IR
-  mkdir build/faultinjected
-  mkdir build/unmodified
-
   ${llvmbin}clang -S -emit-llvm -I"$benchdir" -I./ -I./utilities "$benchpath" ./utilities/polybench.c
 
   mv ./"$benchname".ll ./build/"$benchname".ll
@@ -59,19 +55,11 @@ compile_one()
   mv ./polybench.ll ./build/polybench.ll
   cp ./build/"$benchname".out.5.taffotmp.ll ./build/faultinjectable_IR/"$benchname".out.5.taffotmp.ll
 
-#pauses execution until you press enter. Sourcing preserves variables from the scope of this
-# script by running the script in this shell instead of spawning a new shell
+# pauses execution until you press enter. Sourcing preserves variables from the scope of this
+# script by running the script in the same shell instead of spawning a new shell
 source ./recompile_fault_injected_files.sh
 
 
-  if [[ $RUN_METRICS -ne 0 ]]; then
-    mkdir -p results-out
-    taffo-instmix ./build/"$benchname".out.5.taffotmp.ll > results-out/${benchname}.imix.txt
-    taffo-mlfeat ./build/"$benchname".out.5.taffotmp.ll > results-out/${benchname}.mlfeat.txt
-    $OPT -S -O3 -o ./build/"$benchname".float.out.ll ./build/"$benchname".out.1.taffotmp.ll
-    taffo-instmix ./build/"$benchname".float.out.ll > results-out/${benchname}.float.imix.txt
-    taffo-mlfeat ./build/"$benchname".float.out.ll > results-out/${benchname}.float.mlfeat.txt
-  fi
 }
 
 read_opts()
@@ -166,6 +154,9 @@ for arg; do
 done
 
 mkdir -p build
+mkdir build/faultinjectable_IR
+mkdir build/faultinjected
+mkdir build/unmodified
 rm -f build.log
 
 all_benchs=$(cat ./utilities/benchmark_list)

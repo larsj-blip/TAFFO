@@ -27,14 +27,14 @@ def BenchmarkName(bpath):
   return os.path.basename(os.path.dirname(bpath))
 
 
-def ReadValues(filename):
-  with open(filename, 'r') as f:
-    l = f.readline()
-    while l != '':
-      for v in l.strip().split():
-        if v != '':
-          yield v
-      l = f.readline()
+def create_generator_expression_for_file(filename):
+  with open(filename, 'r') as file:
+    line = file.readline()
+    while line != '':
+      for value in line.strip().split():
+        if value != '':
+          yield value
+      line = file.readline()
 
 
 def compute_difference(fixed_point_data, floating_point_data):
@@ -73,10 +73,10 @@ def compute_difference(fixed_point_data, floating_point_data):
 def ComputeSpeedups(float_times, fixp_times):
   float_list = [Decimal(di) for di in float_times]
   fixp_list = [Decimal(di) for di in fixp_times]
-  float_avg = stat.median(float_list)
-  fixp_avg = stat.median(fixp_list)
-  speedup = float_avg / fixp_avg if fixp_avg != 0 else -1
-  return {'fixed_point_time_average': str(fixp_avg) + " seconds", 'floating_point_time_average': str(float_avg) + " seconds", 'speedup': speedup if speedup != -1 else "data error"}
+  float_median = stat.median(float_list)
+  fixp_median = stat.median(fixp_list)
+  speedup = float_median / fixp_median if fixp_median != 0 else -1
+  return {'fixed_point_time_average': str(fixp_median) + " seconds", 'floating_point_time_average': str(float_median) + " seconds", 'speedup': speedup if speedup != -1 else "data error"}
 
           
 def PrettyPrint(table):
@@ -96,14 +96,16 @@ if __name__ == "__main__":
     if not re.search(args.only, bench):
       continue
     name = BenchmarkName(bench)
+
     floating_point_data_path = PolybenchRootDir() / 'results-out' / (name + '.float.csv')
-    floating_point_data = ReadValues(str(floating_point_data_path))
     floating_point_times_path = PolybenchRootDir() / 'results-out' / (name + '.float.time.txt')
-    floating_point_times = ReadValues(str(floating_point_times_path))
     fixed_point_data_path = PolybenchRootDir() / 'results-out' / (name + '.csv')
-    fixed_point_data = ReadValues(str(fixed_point_data_path))
     fixed_point_execution_times_path = PolybenchRootDir() / 'results-out' / (name + '.time.txt')
-    fixed_point_execution_times = ReadValues(str(fixed_point_execution_times_path))
+
+    floating_point_data = create_generator_expression_for_file(str(floating_point_data_path))
+    floating_point_times = create_generator_expression_for_file(str(floating_point_times_path))
+    fixed_point_data = create_generator_expression_for_file(str(fixed_point_data_path))
+    fixed_point_execution_times = create_generator_expression_for_file(str(fixed_point_execution_times_path))
     try:
       res = compute_difference(fixed_point_data, floating_point_data)
       res.update(ComputeSpeedups(floating_point_times, fixed_point_execution_times))

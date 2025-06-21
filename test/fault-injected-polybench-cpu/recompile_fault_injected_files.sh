@@ -7,11 +7,13 @@ if [[ -z $llvmbin ]]; then
 fi
 
 
-  read -p "specify which bit is being injected and press enter. Only write numbers!"
+  taffo ./build/"$benchname".out.5.taffotmp.ll -o ./build/unmodified/"$benchname".fixed.out
+  "${llvmbin}"clang ./build/"$benchname".ll ./build/polybench.ll -o build/unmodified/"$benchname".float.out
+  read -pr "specify which bit is being injected by writing a number. press enter if done. > "
 
-
-  ${llvmbin}clang ./build/faultinjectable_IR/"$benchname".ll ./build/polybench.ll -o build/faultinjected/"$benchname"_bit_no_"$REPLY".fixed.out
-  ${llvmbin}clang ./build/"$benchname".ll ./build/polybench.ll -o build/unmodified/"$benchname".fixed.out
+  until [[ -n $REPLY ]]; do
+  "${llvmbin}"clang ./build/faultinjectable_IR/"$benchname".ll ./build/polybench.ll -o build/faultinjected/"$benchname"_bit_no_"$REPLY".fixed.out
   taffo ./build/faultinjectable_IR/"$benchname".out.5.taffotmp.ll -o ./build/faultinjected/"$benchname"_bit_no_"$REPLY".float.out
-  taffo ./build/"$benchname".out.5.taffotmp.ll -o ./build/unmodified/"$benchname".float.out
-
+  unset "$REPLY"
+  read -pr "specify which bit is being injected by writing a number. press enter if done. > "
+ done

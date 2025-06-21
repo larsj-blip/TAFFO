@@ -39,17 +39,23 @@ run_one()
   echo
   echo $benchname
   echo
+  #unmodified files
 
-  fix_out=build/faultinjected/"$benchname".fixed.out
-  flt_out=build/faultinjected/"$benchname".float.out
-  
-  $TASKSET $flt_out 2> $datadir/$benchname.float.csv > $datadir/$benchname.float.time.txt || return $?
-  for ((i=1; i<$times; i++)); do
-    $TASKSET $flt_out 2> /dev/null >> $datadir/$benchname.float.time.txt || return $?
+  fix_out=build/unmodified/"$benchname".fixed.out
+  flt_out=build/unmodified/"$benchname".float.out
+
+  $TASKSET $flt_out 2> $datadir/$benchname.float.txt > /dev/null || return $?
+
+  $TASKSET $fix_out 2> $datadir/$benchname.txt > /dev/null || return $?
+
+
+  for ((injected_bit=40; injected_bit<61; injected_bit++)); do
+    flt_out=build/faultinjected/"$benchname"_bit_no_"$injected_bit".float.out
+    $TASKSET $flt_out 2> $datadir/"$benchname"_bit_no_"$injected_bit".float.txt > /dev/null || return $?
   done
-  $TASKSET $fix_out 2> $datadir/$benchname.csv > $datadir/$benchname.time.txt || return $?
-  for ((i=1; i<$times; i++)); do
-    $TASKSET $fix_out 2> /dev/null >> $datadir/$benchname.time.txt || return $?
+  for ((injected_bit=40; injected_bit<61; injected_bit++)); do
+    fix_out=build/faultinjected/"$benchname"_bit_no_"$injected_bit".fixed.out
+    $TASKSET $fix_out 2> $datadir/"$benchname"_bit_no_"$injected_bit".txt > /dev/null || return $?
   done
 
   #unmodified files
@@ -58,13 +64,9 @@ run_one()
   flt_out=build/unmodified/"$benchname".float.out
 
   $TASKSET $flt_out 2> $datadir/$benchname.float.csv > $datadir/$benchname.float.time.txt || return $?
-  for ((i=1; i<$times; i++)); do
-    $TASKSET $flt_out 2> /dev/null >> $datadir/$benchname.float.time.txt || return $?
-  done
+
   $TASKSET $fix_out 2> $datadir/$benchname.csv > $datadir/$benchname.time.txt || return $?
-  for ((i=1; i<$times; i++)); do
-    $TASKSET $fix_out 2> /dev/null >> $datadir/$benchname.time.txt || return $?
-  done
+
 }
 
 
