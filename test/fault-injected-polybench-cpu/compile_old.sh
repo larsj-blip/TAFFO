@@ -34,14 +34,13 @@ compile_one()
   benchdir=$(dirname $benchpath)
   benchname=$(basename $benchdir)
   $TIMEOUT taffo \
-    -emit-llvm\
-    -o build/"$benchname".ll \
-    -float-output build/"$benchname".float.ll \
+    -o build/"$benchname".out \
+    -float-output build/"$benchname".float.out \
     -temp-dir build \
     "$benchpath" \
     ./utilities/polybench.c \
     -I"$benchdir" \
-    -I./utilities\
+    -I./utilities \
     -I./ \
     $xparams \
     $MIXIMI  \
@@ -49,19 +48,14 @@ compile_one()
     -lm \
     2> build/${benchname}.log || return $?
 
-  $TIMEOUT taffo build/"$benchname".ll -o build/unmodified/"$benchname".out
-  ${llvmbin}clang -I"$benchdir" -I./utilities -I./ -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DMEDIUM_DATASET -lm -O3 -Xclang -no-opaque-pointers build/"$benchname".float.ll -o build/unmodified/"$benchname".float.out
-
-# taffo script copies the final intermediate .ll file to the name "$benchname".ll, and likewise the first intermediate
-# .ll file is copied to the name "$benchname".float.ll
-  cp ./build/"$benchname".float.ll ./build/faultinjectable_IR/"$benchname".float.ll
-  cp ./build/"$benchname".ll ./build/faultinjectable_IR/"$benchname".ll
-
-# pauses execution until you press enter. Sourcing preserves variables from the scope of this
-# script by running the script in the same shell instead of spawning a new shell
-source ./recompile_fault_injected_files.sh
-
-
+  if [[ $RUN_METRICS -ne 0 ]]; then
+    mkdir -p results-out
+    taffo-instmix build/"$benchname".out.5.taffotmp.ll > results-out/${benchname}.imix.txt
+    taffo-mlfeat build/"$benchname".out.5.taffotmp.ll > results-out/${benchname}.mlfeat.txt
+    $OPT -S -O3 -o build/"$benchname".float.out.ll build/"$benchname".out.1.taffotmp.ll
+    taffo-instmix build/"$benchname".float.out.ll > results-out/${benchname}.float.imix.txt
+    taffo-mlfeat build/"$benchname".float.out.ll > results-out/${benchname}.float.mlfeat.txt
+  fi
 }
 
 read_opts()
@@ -79,7 +73,7 @@ read_opts()
   if [[ "$opts" != *-Xvra* ]]; then
       opts="$opts -Xvra -max-unroll=0"
   fi
-  
+
   # filter opts if errorprop is disabled
   if [[ -z $ERRORPROP ]]; then
     skip=0
@@ -140,11 +134,11 @@ for arg; do
       ERRORPROP=''
       ;;
     -costmodelfilename=*)
-    MIXIMODE="${MIXIMODE} -mixedmode ${arg}"  
+    MIXIMODE="${MIXIMODE} -mixedmode ${arg}"
     ;;
 
     -instructionsetfile=*)
-    MIXIMODE="${MIXIMODE} ${arg}" 
+    MIXIMODE="${MIXIMODE} ${arg}"
     ;;
     metrics)
       RUN_METRICS=1
@@ -156,9 +150,6 @@ for arg; do
 done
 
 mkdir -p build
-mkdir build/faultinjectable_IR
-mkdir build/faultinjected
-mkdir build/unmodified
 rm -f build.log
 
 all_benchs=$(cat ./utilities/benchmark_list)

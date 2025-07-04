@@ -36,14 +36,14 @@ run_one()
   times=$3
   benchdir=$(dirname $benchpath)
   benchname=$(basename $benchdir)
-  fix_out=build/"$benchname".out
-  flt_out=build/"$benchname".float.out
+  fix_out=build/unmodified/"$benchname".out
+  flt_out=build/unmodified/"$benchname".float.out
   
-  $TASKSET $flt_out 2> $datadir/$benchname.float.csv > $datadir/$benchname.float.time.txt || return $?
+  $TASKSET $flt_out 2> $datadir/$benchname.float.csv > $datadir/$benchname.float.txt || return $?
   for ((i=1; i<$times; i++)); do
     $TASKSET $flt_out 2> /dev/null >> $datadir/$benchname.float.time.txt || return $?
   done
-  $TASKSET $fix_out 2> $datadir/$benchname.csv > $datadir/$benchname.time.txt || return $?
+  $TASKSET $fix_out 2> $datadir/$benchname.csv > $datadir/$benchname.txt || return $?
   for ((i=1; i<$times; i++)); do
     $TASKSET $fix_out 2> /dev/null >> $datadir/$benchname.time.txt || return $?
   done

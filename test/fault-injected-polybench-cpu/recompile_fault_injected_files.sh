@@ -6,14 +6,13 @@ if [[ -z $llvmbin ]]; then
   llvmbin=/opt/llvm-15-d/bin/
 fi
 
+read -p "specify which bit is being injected by writing a number. press enter if done. > "
 
-  taffo ./build/"$benchname".out.5.taffotmp.ll -o ./build/unmodified/"$benchname".fixed.out
-  "${llvmbin}"clang ./build/"$benchname".ll ./build/polybench.ll -o build/unmodified/"$benchname".float.out
-  read -pr "specify which bit is being injected by writing a number. press enter if done. > "
+until [[ -z $REPLY ]]; do
 
-  until [[ -n $REPLY ]]; do
-  "${llvmbin}"clang ./build/faultinjectable_IR/"$benchname".ll ./build/polybench.ll -o build/faultinjected/"$benchname"_bit_no_"$REPLY".fixed.out
-  taffo ./build/faultinjectable_IR/"$benchname".out.5.taffotmp.ll -o ./build/faultinjected/"$benchname"_bit_no_"$REPLY".float.out
-  unset "$REPLY"
-  read -pr "specify which bit is being injected by writing a number. press enter if done. > "
- done
+  $TIMEOUT taffo build/faultinjectable_IR/"$benchname".ll -o build/"$benchname"_bit_no_"$REPLY".fixed.out
+  ${llvmbin}clang -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DMEDIUM_DATASET -lm -O3 -Xclang -no-opaque-pointers build/faultinjectable_IR/"$benchname".float.ll -o build/unmodified/"$benchname"_bit_no_"$REPLY".float.out
+
+  read -p "specify which bit is being injected by writing a number. press enter if done. > "
+
+done
