@@ -36,8 +36,8 @@ run_one()
   times=$3
   benchdir=$(dirname $benchpath)
   benchname=$(basename $benchdir)
-  fix_out=build/unmodified/"$benchname".out
-  flt_out=build/unmodified/"$benchname".float.out
+  fix_out=build/"$benchname".fixed.out
+  flt_out=build/"$benchname".float.out
   
   $TASKSET $flt_out 2> $datadir/$benchname.float.csv > $datadir/$benchname.float.txt || return $?
   for ((i=1; i<$times; i++)); do

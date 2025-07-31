@@ -34,14 +34,13 @@ compile_one()
   benchdir=$(dirname $benchpath)
   benchname=$(basename $benchdir)
   $TIMEOUT taffo \
-    -emit-llvm\
-    -o build/"$benchname".ll \
-    -float-output build/"$benchname".float.ll \
+    -o build/"$benchname".out \
+    -float-output build/"$benchname".float.out \
     -temp-dir build \
     "$benchpath" \
     ./utilities/polybench.c \
     -I"$benchdir" \
-    -I./utilities\
+    -I./utilities \
     -I./ \
     $xparams \
     $MIXIMI  \
@@ -49,13 +48,24 @@ compile_one()
     -lm \
     2> build/${benchname}.log || return $?
 
-  $TIMEOUT taffo build/"$benchname".ll -o build/unmodified/"$benchname".out
-  ${llvmbin}clang -I"$benchdir" -I./utilities -I./ -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DMEDIUM_DATASET -lm -O3 -Xclang -no-opaque-pointers build/"$benchname".float.ll -o build/unmodified/"$benchname".float.out
+#build/seidel-2d.ll.1.taffotmp.ll is the name of the IR for the floating point implementation. rename to float.ll
+#/usr/lib/llvm-15/bin/clang -I./stencils/seidel-2d -I./utilities -I./ -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DMEDIUM_DATASET -lm -O3 -Xclang -no-opaque-pointers build/seidel-2d.ll.1.taffotmp.ll -S -emit-llvm -o build/seidel-2d.float.ll
+#is the command used to compile to float.
+
+
+#the llvmbin variable ends with a /, so we skip the / when using a variable. This is tied to taffo behavior.
+"$llvmbin"clang -I"$benchpath" -I./utilities -I./ -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DMEDIUM_DATASET -lm -O3 -Xclang -no-opaque-pointers build/"$benchname".out.5.taffotmp.ll -o build/unmodified/"$benchname".fixed.out
+"$llvmbin"clang -I"$benchpath" -I./utilities -I./ -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DMEDIUM_DATASET -lm -O3 -Xclang -no-opaque-pointers build/"$benchname".out.1.taffotmp.ll -o build/unmodified/"$benchname".float.out
+
 
 # taffo script copies the final intermediate .ll file to the name "$benchname".ll, and likewise the first intermediate
 # .ll file is copied to the name "$benchname".float.ll
-  cp ./build/"$benchname".float.ll ./build/faultinjectable_IR/"$benchname".float.ll
-  cp ./build/"$benchname".ll ./build/faultinjectable_IR/"$benchname".ll
+# if you specify an output -o for taffo as well as -S -emit-llvm, the output file will be named .out not .ll .
+# IN ADDITION TO THIS you do not have to specify -emit-llvm to get llvm-ir output, this is created anyways under
+#out.5.taffotmp.ll for the fixed point implementation
+#out.1.taffotmp.ll for the standard float implementation
+  cp ./build/"$benchname".out.1.taffotmp.ll  ./build/faultinjectable_IR/"$benchname".float.ll
+  cp ./build/"$benchname".out.5.taffotmp.ll ./build/faultinjectable_IR/"$benchname".ll
 
 # pauses execution until you press enter. Sourcing preserves variables from the scope of this
 # script by running the script in the same shell instead of spawning a new shell

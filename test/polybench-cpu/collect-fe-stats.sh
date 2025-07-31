@@ -18,7 +18,7 @@ mkdir -p $OUT_DIR
 
 for conf in vra; do
   echo conf = $conf
-  ./compile.sh --no-err metrics & wait
+  ./compile.sh metrics & wait
   ./run.sh --times=$NEXEC & wait
   ./validate.py > $OUT_DIR/${conf}.txt & wait
   mv results-out $OUT_DIR/${conf}

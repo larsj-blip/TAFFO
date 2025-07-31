@@ -12,7 +12,7 @@ entry:
   %0 = load i64, i64* %x.addr, align 8
   %1 = load i64, i64* %x.addr, align 8
   %mul = mul nsw i64 %0, %1, !taffo.info !5
-  %2 = load i64, i64* %x.addr, align 8
+  %2 = lo   ad i64, i64* %x.addr, align 8
   %mul1 = mul nsw i64 %mul, %2, !taffo.info !7
   ret i64 %mul1
 }

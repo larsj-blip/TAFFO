@@ -1,4 +1,4 @@
-===== line 108... in seidel-2d.ll =====
+===== line 108... in seidel-2d.float.ll =====
   %temp1 = fdiv double %22, %24
   %temp2 = shl i64 1, 40
   %temp3 = bitcast double %temp1 to i64
@@ -6,8 +6,24 @@
   %25 = bitcast i64 %temp4 to double
 
 
-  ===== line 431... in seidel-2d.out.5.taffotmp.ll =====
+  ===== injected snippet in seidel-2d.fixed.ll start of injection: line 431 end of injection: line 432=====
   %18 = sdiv i64 %16, %17, !taffo.info !109
   %temp1 = shl i64 1, 40
   %temp2 = xor i64 %temp1, %18
   %s10_22fixp4 = trunc i64 %temp2 to i32, !taffo.info !110
+
+
+  ============= fault injected snippet float start: line 107 end: llkjsfdlakjfsadfine 115================
+  %temp1 = fdiv double %24, %26
+  %temp2 = shl i64 1, 40
+  %temp3 = bitcast double %temp1 to i64
+  %temp4 = xor i64 %temp2, %temp3
+  %27 = bitcast i64 %temp4 to double
+  %28 = load [400 x double]*, [400 x double]** %4, align 8
+  %29 = load i32, i32* %5, align 4
+  %30 = sext i32 %29 to i64
+  %31 = getelementptr inbounds [400 x double], [400 x double]* %28, i64 %30
+  %32 = load i32, i32* %6, align 4
+  %33 = sext i32 %32 to i64
+  %34 = getelementptr inbounds [400 x double], [400 x double]* %31, i64 0, i64 %33
+  store double %27, double* %34, align 8

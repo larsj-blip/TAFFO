@@ -39,33 +39,23 @@ run_one()
   echo
   echo $benchname
   echo
+
   #unmodified files
 
   fix_out=build/unmodified/"$benchname".fixed.out
   flt_out=build/unmodified/"$benchname".float.out
 
-  $TASKSET $flt_out 2> $datadir/$benchname.float.txt > /dev/null || return $?
 
-  $TASKSET $fix_out 2> $datadir/$benchname.txt > /dev/null || return $?
+  $TASKSET "$flt_out" 2> "$datadir"/"$benchname".float.txt > /dev/null || return $?
+  $TASKSET "$fix_out" 2> "$datadir"/"$benchname".txt > /dev/null || return $?
 
 
-  for ((injected_bit=40; injected_bit<61; injected_bit++)); do
+  for ((injected_bit=0; injected_bit<1; injected_bit++)); do
     flt_out=build/faultinjected/"$benchname"_bit_no_"$injected_bit".float.out
-    $TASKSET $flt_out 2> $datadir/"$benchname"_bit_no_"$injected_bit".float.txt > /dev/null || return $?
-  done
-  for ((injected_bit=40; injected_bit<61; injected_bit++)); do
     fix_out=build/faultinjected/"$benchname"_bit_no_"$injected_bit".fixed.out
-    $TASKSET $fix_out 2> $datadir/"$benchname"_bit_no_"$injected_bit".txt > /dev/null || return $?
+    $TASKSET "$fix_out" 2> "$datadir"/"$benchname"_bit_no_"$injected_bit".fixed.txt > /dev/null || return $?
+    $TASKSET "$flt_out" 2> "$datadir"/"$benchname"_bit_no_"$injected_bit".float.txt > /dev/null || return $?
   done
-
-  #unmodified files
-
-  fix_out=build/unmodified/"$benchname".fixed.out
-  flt_out=build/unmodified/"$benchname".float.out
-
-  $TASKSET $flt_out 2> $datadir/$benchname.float.csv > $datadir/$benchname.float.time.txt || return $?
-
-  $TASKSET $fix_out 2> $datadir/$benchname.csv > $datadir/$benchname.time.txt || return $?
 
 }
 
